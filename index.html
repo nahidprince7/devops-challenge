@@ -707,8 +707,8 @@
                 desc: "A major influencer tweeted about your site! Traffic is scaling to 200 req/s. Upgrade your capacity and add horizontal compute scaling before your server melts.",
                 goalText: "Survive 45 seconds with Uptime above 95%",
                 duration: 45,
-                startBudget: 1000,
-                baseTraffic: 220,
+                startBudget: 1200,
+                baseTraffic: 200,
                 trafficPattern: 'spike', // simple spike profile
                 objectives: [
                     { id: 'scale_horizontal', label: 'Deploy at least 2 Web Servers', check: () => appServers.length >= 2 },
