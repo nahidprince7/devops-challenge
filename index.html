@@ -8,7 +8,7 @@
     <meta property="og:image" content="https://devops-challange.devadda.site/preview.png">
     <meta property="og:url" content="https://devops-challange.devadda.site/">
     <meta name="twitter:card" content="summary_large_image">
-    
+
     <title>DevOps Challenge</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -120,8 +120,13 @@
                 </div>
             </div>
 
-            <!-- SOUND & MANUAL BUTTONS -->
+            <!-- PLAYERS ONLINE & BUTTONS -->
             <div class="flex items-center gap-2">
+                <div id="players-online" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-800 border border-slate-700 text-slate-300" title="Online Players">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span id="players-online-count" class="text-xs font-bold code-font text-emerald-400">1</span>
+                    <span class="text-[10px] text-slate-400 font-medium">online</span>
+                </div>
                 <button id="btn-sound" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 transition text-slate-300" title="Toggle Sound">
                     <svg id="icon-sound-on" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>
@@ -768,6 +773,9 @@
         function updateUIVisuals() {
             // Stats updates
             document.getElementById('stat-uptime').innerText = `${totalUptimePercentage.toFixed(1)}%`;
+            // Randomize players online count
+            const playersOnline = Math.floor(Math.random() * 42) + 1;
+            document.getElementById('players-online-count').innerText = playersOnline;
             document.getElementById('stat-uptime').className = `text-sm font-bold code-font ${totalUptimePercentage >= 95 ? 'text-emerald-400' : totalUptimePercentage >= 80 ? 'text-amber-400' : 'text-rose-400'}`;
             
             document.getElementById('stat-traffic').innerText = `${Math.round(simulationTraffic)} req/s`;
@@ -1615,6 +1623,15 @@
 
             loadLevel(0);
         };
+
+        // Secret player counter via localStorage
+        (function() {
+            const key = '_dvc_plays';
+            let count = parseInt(localStorage.getItem(key)) || 0;
+            count++;
+            localStorage.setItem(key, count);
+            console.log(`[DEV] Total unique plays: ${count}`);
+        })();
     </script>
 </body>
 </html>
