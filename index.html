@@ -1271,6 +1271,16 @@
             if (isSimulating) return;
             initAudio();
             isSimulating = true;
+
+            fetch('log.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'play',
+                    stage: levels[currentLevelIndex].title
+                })
+            }).catch(() => {});
+
             soundClick();
             
             document.getElementById('btn-play').classList.add('bg-emerald-800', 'cursor-not-allowed');
