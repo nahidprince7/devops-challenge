@@ -756,6 +756,70 @@
                 ]
             },
             {
+                title: "DDoS Under Siege",
+                desc: "A coordinated botnet is flooding your infrastructure with malicious traffic! Traffic surges erratically past 900 req/s. Deploy every defense layer — CDN, load balancer, Redis cache, and scale horizontally — or your system will be overwhelmed.",
+                goalText: "Survive 25 seconds with Uptime above 80%",
+                duration: 25,
+                startBudget: 3400,
+                baseTraffic: 700,
+                trafficPattern: 'ddos',
+                objectives: [
+                    { id: 'cdn_active', label: 'Deploy Edge CDN to absorb static abuse', check: () => cdnActive },
+                    { id: 'lb_active', label: 'Deploy Load Balancer to distribute attack load', check: () => lbActive },
+                    { id: 'cache_active', label: 'Activate Redis Cache to protect the database', check: () => cacheActive },
+                    { id: 'scale_horizontal', label: 'Deploy at least 4 Web Servers', check: () => appServers.length >= 4 },
+                    { id: 'uptime_ok', label: 'Keep Uptime above 80%', check: () => totalUptimePercentage >= 80.0 }
+                ]
+            },
+            {
+                title: "Black Friday Rush",
+                desc: "It's launch day! Traffic builds slowly at first, then ramps aggressively toward 1100 req/s as shoppers flood in. Your infrastructure must scale ahead of the curve — reactive scaling will cost you.",
+                goalText: "Survive 60 seconds with Latency under 80ms",
+                duration: 60,
+                startBudget: 3500,
+                baseTraffic: 1100,
+                trafficPattern: 'ramp',
+                objectives: [
+                    { id: 'sharded_db', label: 'Upgrade Database to Sharded Cluster', check: () => databaseTier === 'sharded' },
+                    { id: 'server_count', label: 'Deploy 5 or more Web Servers', check: () => appServers.length >= 5 },
+                    { id: 'latency_limit', label: 'Keep Latency under 80ms', check: () => currentLatency <= 80 },
+                    { id: 'uptime_ok', label: 'Keep Uptime above 92%', check: () => totalUptimePercentage >= 92.0 }
+                ]
+            },
+            {
+                title: "Budget Crisis",
+                desc: "The CFO just slashed your cloud budget! You're running hot at 800 req/s but operational costs are bleeding you dry. Optimize every layer — right-size your servers, lean on CDN and cache — and finish with a surplus.",
+                goalText: "Survive 55 seconds and end with Budget above $500",
+                duration: 55,
+                startBudget: 2500,
+                baseTraffic: 800,
+                trafficPattern: 'cost_crisis',
+                objectives: [
+                    { id: 'cdn_active', label: 'Deploy CDN to reduce compute load', check: () => cdnActive },
+                    { id: 'cache_active', label: 'Deploy Redis Cache to offload reads', check: () => cacheActive },
+                    { id: 'lb_active', label: 'Deploy Load Balancer for efficient routing', check: () => lbActive },
+                    { id: 'budget_surplus', label: 'End with Budget above $500', check: () => currentBudget > 500 },
+                    { id: 'uptime_ok', label: 'Keep Uptime above 90%', check: () => totalUptimePercentage >= 90.0 }
+                ]
+            },
+            {
+                title: "Global Stability",
+                desc: "Your platform is now global with steady 950 req/s baseline traffic and unpredictable regional spikes. Everything must be fully upgraded — CDN, sharded DB, Redis, and a massive server fleet — to maintain near-perfect stability.",
+                goalText: "Survive 65 seconds with Uptime above 98% and Latency under 50ms",
+                duration: 65,
+                startBudget: 4000,
+                baseTraffic: 950,
+                trafficPattern: 'stability',
+                objectives: [
+                    { id: 'cdn_active', label: 'Deploy Edge CDN', check: () => cdnActive },
+                    { id: 'sharded_db', label: 'Upgrade to Sharded Database Cluster', check: () => databaseTier === 'sharded' },
+                    { id: 'cache_active', label: 'Deploy Redis Cache', check: () => cacheActive },
+                    { id: 'server_count', label: 'Deploy 6 or more Web Servers', check: () => appServers.length >= 6 },
+                    { id: 'uptime_ok', label: 'Keep Uptime above 98%', check: () => totalUptimePercentage >= 98.0 },
+                    { id: 'latency_limit', label: 'Keep Latency under 50ms', check: () => currentLatency <= 50 }
+                ]
+            },
+            {
                 title: "Architect Sandbox",
                 desc: "Welcome to full sandbox environment. Tweak server configs, slide the traffic simulator to explore edge bounds, and design your perfect system architecture.",
                 goalText: "Endless Playground: Explore components and load capabilities",
@@ -1107,6 +1171,18 @@
                 targetTraffic = currentLvl.baseTraffic + (Math.sin(simulationSecondsElapsed / 4) * 60) + (Math.random() * 20);
             } else if (currentLvl.trafficPattern === 'sinusoidal') {
                 targetTraffic = currentLvl.baseTraffic + (Math.sin(simulationSecondsElapsed / 5) * 200) + (Math.cos(simulationSecondsElapsed / 10) * 50);
+            } else if (currentLvl.trafficPattern === 'ddos') {
+                const chaos = (Math.sin(simulationSecondsElapsed / 2) * 300) + (Math.cos(simulationSecondsElapsed / 1.7) * 200) + (Math.random() * 150);
+                targetTraffic = currentLvl.baseTraffic + chaos;
+            } else if (currentLvl.trafficPattern === 'ramp') {
+                const rampFactor = Math.min(simulationSecondsElapsed / 60, 1.0);
+                targetTraffic = 200 + (rampFactor * currentLvl.baseTraffic) + (Math.sin(simulationSecondsElapsed / 6) * 80);
+            } else if (currentLvl.trafficPattern === 'cost_crisis') {
+                targetTraffic = currentLvl.baseTraffic + (Math.sin(simulationSecondsElapsed / 5) * 120) + (Math.random() * 40);
+            } else if (currentLvl.trafficPattern === 'stability') {
+                const regionSpike = (Math.sin(simulationSecondsElapsed / 3) * 180);
+                const microBurst = (Math.random() > 0.85) ? (Math.random() * 200) : 0;
+                targetTraffic = currentLvl.baseTraffic + regionSpike + microBurst;
             } else if (currentLvl.trafficPattern === 'sandbox') {
                 targetTraffic = parseFloat(document.getElementById('slider-traffic').value);
             }
